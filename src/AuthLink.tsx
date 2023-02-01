@@ -14,14 +14,20 @@ const signOutMutation = gql`
   }
 `;
 
-export const AuthLink = ({ children }) => {
+export const AuthLink = ({ children }: {children: React.ReactNode}) => {
   const [signOutUser] = useMutation(signOutMutation);
-  const { isAuthenticated, setAuthInfo } = useContext(AuthContext);
+  const contextValues = useContext(AuthContext);
   const history = useHistory();
+
+  if (contextValues === undefined ) {
+    return null;
+  }
+
+  const {isAuthenticated, setAuthInfo} = contextValues;
 
   const handleSignOut = async () => {
     await signOutUser();
-    setAuthInfo({ userData: undefined });
+    setAuthInfo({ userData: null });
     history.push("/auth/sign-in");
   };
 
