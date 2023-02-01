@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 interface AuthContextValues {
-  authInfo:AuthoInfo;
+  authInfo: AuthInfo;
   isAuthenticated: boolean;
-  setAuthInfo:  React.Dispatch<React.SetStateAction<AuthoInfo>>;
+  setAuthInfo: (authInfo: AuthInfo) => void;
   isAdmin: boolean;
 }
 
-export const AuthContext = React.createContext<undefined | AuthContextValues>(undefined);
+export const AuthContext = React.createContext<undefined | AuthContextValues>(
+  undefined
+);
 const Provider = AuthContext.Provider;
 
 interface Props {
@@ -15,15 +17,15 @@ interface Props {
 }
 
 interface UserData {
-  role: string;
+  role: "USER" | "ADMIN";
 }
 
-interface AuthoInfo {
-  userData:  UserData | null
+interface AuthInfo {
+  userData: UserData | null;
 }
 
 export function AuthProvider({ children }: Props) {
-  const [authInfo, setAuthInfo] = React.useState<AuthoInfo>({
+  const [authInfo, setAuthInfo] = React.useState<AuthInfo>({
     userData: null,
   });
 
@@ -32,18 +34,25 @@ export function AuthProvider({ children }: Props) {
   const isAdmin = authInfo.userData?.role === "ADMIN";
 
   return (
-    <Provider value={{ authInfo, isAuthenticated, setAuthInfo, isAdmin }}>
+    <Provider
+      value={{
+        authInfo,
+        isAuthenticated,
+        setAuthInfo,
+        isAdmin,
+      }}
+    >
       {children}
     </Provider>
   );
 }
 
- export function useAuthContext() {
+export function useAuthContext() {
   const context = React.useContext(AuthContext);
 
   if (context === undefined) {
-    return null;
+    // handle
+    throw new Error("useAuthContext should be used within an AuthProvider.");
   }
-
   return context;
 }

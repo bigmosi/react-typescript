@@ -1,17 +1,11 @@
 import * as React from "react";
 import { useMutation, gql } from "@apollo/client";
 import { Formik, Form, Field } from "formik";
-
-export const CREATE_SESSION = gql`
-  mutation createSession($session: SessionInput) {
-    createSession(session: $session) {
-      id
-      title
-    }
-  }
-`;
+import { useHistory } from "react-router-dom";
+import { CREATE_SESSION } from "./CREATE_SESSION";
 
 export function SessionForm() {
+  const history = useHistory();
   const [create] = useMutation(CREATE_SESSION);
 
   return (
@@ -33,6 +27,9 @@ export function SessionForm() {
         }}
         onSubmit={async values => {
           await create({ variables: { session: values } });
+          setTimeout(() => {
+            history.push("/conference/sessions");
+          }, 2000);
         }}
       >
         {() => (
